@@ -754,18 +754,18 @@ export default function Dashboard() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard'],
-    queryFn: () => axios.get('/api/reports/dashboard').then(r => r.data),
+    queryFn: () => axios.get('/api/reports/dashboard').then(r => r.data?.data || r.data),
     refetchInterval: 30000,
   })
   
   const { data: movement } = useQuery({
     queryKey: ['stock-movement'],
-    queryFn: () => axios.get('/api/reports/stock-movement').then(r => r.data),
+    queryFn: () => axios.get('/api/reports/stock-movement').then(r => Array.isArray(r.data) ? r.data : r.data?.data || []),
   })
   
   const { data: mostUsed } = useQuery({
     queryKey: ['most-used'],
-    queryFn: () => axios.get('/api/reports/most-used').then(r => r.data),
+    queryFn: () => axios.get('/api/reports/most-used').then(r => Array.isArray(r.data) ? r.data : r.data?.data || []),
   })
 
   const metrics = useMemo(() => [
