@@ -21,15 +21,18 @@ export function AuthProvider({ children }) {
   }, [])
 
   const login = async (email, password) => {
-    const { data } = await axios.post('/api/auth/login', { email, password })
-    localStorage.setItem('token', data.token)
-    localStorage.setItem('user', JSON.stringify(data.user))
-    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
-    setUser(data.user)
-    toast.success(`Welcome back, ${data.user.name}!`)
-    navigate('/dashboard')
-  }
-
+  const { data } = await axios.post('/api/auth/login', { email, password })
+  localStorage.setItem('token', data.token)
+  
+  // Handle if user object is nested or not present
+  const user = data.user || data.data?.user || { email }
+  localStorage.setItem('user', JSON.stringify(user))
+  
+  axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`
+  setUser(user)
+  toast.success(`Welcome back!`)
+  navigate('/dashboard')
+}
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
