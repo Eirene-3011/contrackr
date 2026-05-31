@@ -1,0 +1,254 @@
+# ConTrackr — Construction Materials Delivery & Inventory Monitoring System
+**CENG 116 – Database Management in Construction**  
+**CavSU BSCE 4-2 | Group 2**
+
+---
+
+## System Overview
+
+ConTrackr is a full-stack web application that manages:
+- **Material Requests** — Auto-checks warehouse inventory, auto-stocks-out if available, auto-creates Purchase Request if insufficient stock
+- **Procurement Workflow** — Purchase Requests (PR) → Canvass/Quotation → Purchase Orders (PO)
+- **Delivery Tracking** — Record deliveries, confirm to auto-update inventory
+- **Inventory Monitoring** — Real-time stock tracking per warehouse and per project site, low-stock alerts
+- **Inter-Project Transfers** — Transfer materials between project sites or from warehouse with approval workflow
+- **Reports & Analytics** — Transaction logs, inventory summary, stock movement charts
+
+---
+
+## Technology Stack
+| Layer | Technology |
+|---|---|
+| Frontend | React 18 + Vite + Tailwind CSS |
+| Backend | Node.js + Express |
+| Database | MySQL 8 (via XAMPP/phpMyAdmin) |
+| Auth | JWT (JSON Web Tokens) |
+| Charts | Recharts |
+
+---
+
+## Default User Accounts
+| Email | Password | Role |
+|---|---|---|
+| admin@contrackr.com | Admin@123 | Administrator |
+| manager@contrackr.com | Admin@123 | Project Manager |
+| procurement@contrackr.com | Admin@123 | Procurement Officer |
+| engineer@contrackr.com | Admin@123 | Site Engineer |
+| warehouse@contrackr.com | Admin@123 | Warehouse Manager |
+
+---
+
+## ⚡ Quick Setup (Windows with XAMPP)
+
+### Prerequisites
+1. **XAMPP** — Download from https://www.apachefriends.org/ (includes MySQL + phpMyAdmin)
+2. **Node.js 18+** — Download from https://nodejs.org/ (LTS version)
+3. **Git** (optional) — https://git-scm.com/
+
+---
+
+## Step-by-Step Installation
+
+### Step 1 — Install and Start XAMPP
+1. Install XAMPP to `C:\xampp`
+2. Open **XAMPP Control Panel** (Run as Administrator)
+3. Click **Start** next to **Apache**
+4. Click **Start** next to **MySQL**
+5. Both should show green "Running" status
+
+### Step 2 — Import the Database
+1. Open your browser and go to: http://localhost/phpmyadmin
+2. Click **"New"** in the left sidebar
+3. Create database: Type `contrackr_db`, click **Create**
+4. Click on `contrackr_db` to select it
+5. Click the **"Import"** tab at the top
+6. Click **"Choose File"** and select:  
+   `contrackr-project\database\contrackr.sql`
+7. Scroll down and click **"Go"** (import button)
+8. Wait for the success message — 16 tables will be created
+
+### Step 3 — Configure the Backend
+1. Open File Explorer, go to the project folder
+2. Navigate to `contrackr-project\backend\`
+3. Copy `.env.example` and rename the copy to `.env`
+4. The default settings work for XAMPP (MySQL root with no password)
+
+If you have a MySQL root password, open `.env` with Notepad and update:
+```
+DB_PASSWORD=your_mysql_password
+```
+
+### Step 4 — Install Backend Dependencies
+1. Open **Command Prompt** (press Win+R, type `cmd`, press Enter)
+2. Navigate to the backend folder:
+```cmd
+cd C:\path\to\contrackr-project\backend
+```
+3. Install dependencies:
+```cmd
+npm install
+```
+4. Start the backend server:
+```cmd
+npm run dev
+```
+5. You should see:
+```
+🚀 ConTrackr API running at http://localhost:5000
+📋 Health check: http://localhost:5000/api/health
+```
+**Keep this window open!**
+
+### Step 5 — Install Frontend Dependencies
+1. Open a **new** Command Prompt window
+2. Navigate to the frontend folder:
+```cmd
+cd C:\path\to\contrackr-project\frontend
+```
+3. Install dependencies:
+```cmd
+npm install
+```
+4. Start the frontend development server:
+```cmd
+npm run dev
+```
+5. You should see:
+```
+  VITE v5.x.x  ready in xxx ms
+  ➜  Local:   http://localhost:5173/
+```
+
+### Step 6 — Open the Application
+1. Open your browser
+2. Go to: **http://localhost:5173**
+3. Login with any default account (e.g., `admin@contrackr.com` / `Admin@123`)
+
+---
+
+## 🚀 Quick Launch Scripts
+
+### `start-backend.bat` (double-click to start backend)
+```batch
+cd /d "%~dp0backend"
+npm run dev
+pause
+```
+
+### `start-frontend.bat` (double-click to start frontend)
+```batch
+cd /d "%~dp0frontend"
+npm run dev
+pause
+```
+
+---
+
+## Project Structure
+```
+contrackr-project/
+├── database/
+│   └── contrackr.sql           ← Full MySQL schema + seed data
+├── backend/
+│   ├── .env.example            ← Copy to .env and configure
+│   ├── package.json
+│   └── src/
+│       ├── index.js            ← Express app entry point
+│       ├── db/
+│       │   └── connection.js   ← MySQL connection pool
+│       ├── middleware/
+│       │   └── auth.js         ← JWT authentication middleware
+│       └── routes/
+│           ├── auth.js         ← Login/logout
+│           ├── users.js        ← User management
+│           ├── materials.js    ← Materials CRUD
+│           ├── projects.js     ← Projects CRUD
+│           ├── suppliers.js    ← Suppliers CRUD
+│           ├── materialRequests.js ← MR with auto-inventory logic
+│           ├── procurement.js  ← PR/PO/Canvass workflow
+│           ├── inventory.js    ← Stock-in/out tracking
+│           ├── deliveries.js   ← Delivery recording & confirmation
+│           ├── transfers.js    ← Inter-project transfers
+│           └── reports.js      ← Reports & dashboard data
+└── frontend/
+    ├── package.json
+    ├── vite.config.js
+    ├── tailwind.config.js
+    └── src/
+        ├── App.jsx
+        ├── main.jsx
+        ├── index.css
+        ├── context/
+        │   └── AuthContext.jsx
+        ├── components/
+        │   ├── Layout.jsx
+        │   ├── Sidebar.jsx
+        │   ├── Header.jsx
+        │   └── ProtectedRoute.jsx
+        └── pages/
+            ├── Login.jsx
+            ├── Dashboard.jsx
+            ├── Materials.jsx
+            ├── Projects.jsx
+            ├── MaterialRequests.jsx
+            ├── Procurement.jsx
+            ├── Inventory.jsx
+            ├── Deliveries.jsx
+            ├── Transfers.jsx
+            ├── Reports.jsx
+            ├── Users.jsx
+            └── Suppliers.jsx
+```
+
+---
+
+## Database Tables (16 tables)
+| Table | Description |
+|---|---|
+| roles | User roles (5 default roles) |
+| users | System users |
+| projects | Construction projects |
+| materials | Materials master list |
+| suppliers | Supplier records |
+| project_inventory | Stock per project/warehouse |
+| material_requests | MR header |
+| mr_items | MR line items |
+| purchase_requests | PR header |
+| pr_items | PR line items |
+| canvass | Supplier quotations per PR |
+| purchase_orders | PO header |
+| po_items | PO line items |
+| deliveries | Delivery records |
+| delivery_items | Delivery line items |
+| inventory_transactions | All stock movements (IN/OUT/TRANSFER) |
+
+---
+
+## Key Business Logic
+1. **MR Auto-Fulfillment**: When a Material Request is submitted, the system checks warehouse inventory. If sufficient stock exists, it auto-issues (stock-out). If not, it auto-creates a Purchase Request.
+2. **Delivery Confirmation**: When a delivery is confirmed, inventory is automatically updated (stock-in) and a transaction log is recorded.
+3. **Transfer Approval**: When a transfer is approved, the source location is debited and the destination is credited, with a TRANSFER transaction logged.
+4. **Low Stock Alerts**: Dashboard shows real-time alerts when any material falls at or below its reorder level.
+
+---
+
+## Troubleshooting
+
+**MySQL connection error:**
+- Make sure XAMPP MySQL is running (green in Control Panel)
+- Check `.env` file has correct DB_PASSWORD
+
+**npm not found:**
+- Install Node.js from https://nodejs.org and restart Command Prompt
+
+**Port already in use:**
+- Backend (5000): Check if another app uses port 5000, change `PORT=5001` in `.env`
+- Frontend (5173): Vite will automatically try the next port
+
+**phpMyAdmin import fails:**
+- Make sure you created `contrackr_db` first before importing
+- Check that MySQL is running in XAMPP
+
+---
+
+*Submitted for CENG 116 | CavSU BSCE 4-2 Group 2*
